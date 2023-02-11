@@ -24,6 +24,14 @@ export default function Students() {
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
+      <div className='mt-6'>
+        <Link
+          to={'/students/add'}
+          className='mr-2 mb-2 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800'
+        >
+          Add students
+        </Link>
+      </div>
       {isLoading && (
         <div role='status' className='mt-6 animate-pulse'>
           <div className='mb-4 h-4  rounded bg-gray-200 dark:bg-gray-700' />

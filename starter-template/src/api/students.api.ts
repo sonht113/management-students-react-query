@@ -9,3 +9,5 @@ export const getStudents = (page: number | string, limit: number | string) => {
     }
   })
 }
+
+export const addStudent = (student: Omit<Student, 'id'>) => http.post<Student>('/students', student)
