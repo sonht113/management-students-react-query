@@ -16,10 +16,10 @@ function App() {
       path: '/students',
       element: <Students />
     },
-    // {
-    //   path: '/students/:id',
-    //   element: <AddStudent />
-    // },
+    {
+      path: '/students/:id',
+      element: <AddStudent />
+    },
     {
       path: '/students/add',
       element: <AddStudent />
