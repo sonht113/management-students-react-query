@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 
-import { deleteStudent, getStudents } from 'api/students.api'
+import { deleteStudent, getStudent, getStudents } from 'api/students.api'
 import { useQueryString } from 'hook/useQueryString'
 
 const LIMIT = 10
@@ -11,6 +11,7 @@ const LIMIT = 10
 export default function Students() {
   const queryString: { page?: string } = useQueryString()
   const page = Number(queryString.page) || 1
+  const queryClient = useQueryClient()
 
   const queryStudents = useQuery({
     queryKey: ['students', page],
@@ -20,13 +21,22 @@ export default function Students() {
 
   const deleteStudentMutate = useMutation({
     mutationFn: (id: string | number) => deleteStudent(id),
-    onSuccess: (_) => queryStudents
+    onSuccess: (_) => {
+      queryClient.invalidateQueries({queryKey: ['students', page], exact: true})
+    }
   })
 
   const handleDeleteStudent = (id: string | number) => deleteStudentMutate.mutate(id)
 
   const totalStudentsCount = Number(queryStudents.data?.headers['x-total-count'] || 0)
   const totalPage = Math.ceil(totalStudentsCount / LIMIT)
+
+  const handlePrefetchStudent = (id: number) => {
+    queryClient.prefetchQuery(['students', String(id)], {
+      queryFn: () => getStudent(id),
+      staleTime: 5 * 1000,
+    })
+  }
 
   return (
     <div>
@@ -85,6 +95,7 @@ export default function Students() {
                   <tr
                     key={student.id}
                     className='border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'
+                    onMouseEnter={() => handlePrefetchStudent(student.id)}
                   >
                     <td className='py-4 px-6'>{student.id}</td>
                     <td className='py-4 px-6'>
